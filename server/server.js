@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -246,6 +247,15 @@ app.post('/divinate-test', (req, res) => {
     // 忽略输入的问题，直接返回预制的 SVG
     res.json({ svg: presetSvg });
 });
+
+// 提供静态文件
+app.use(express.static(path.join(__dirname, '../dist')));
+
+// 处理所有路由
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 
 const PORT = process.env.S_PORT || 3000;
 app.listen(PORT, () => {
