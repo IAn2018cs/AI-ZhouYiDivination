@@ -257,7 +257,7 @@ app.get('*', (req, res) => {
 });
 
 
-const PORT = process.env.S_PORT || 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);
 });
