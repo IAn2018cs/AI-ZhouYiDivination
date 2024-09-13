@@ -13,10 +13,9 @@
         <p>正在解读天机，请稍候...</p>
       </div>
       <div v-if="svgResult" class="result">
-        <div class="svg-container" v-html="svgResult"></div>
+        <img v-if="svgResult" :src="svgResult" alt="占卜结果" class="divination-image" @load="onImageLoad" />
         <div class="button-group">
           <button @click="saveImage">保存图片</button>
-          <button @click="shareImage">分享</button>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
+const sharp = require('sharp');
 
 const app = express();
 app.use(cors());
@@ -232,20 +233,22 @@ app.post('/divinate', async (req, res) => {
     const svgCode = svgMatch ? svgMatch[1].trim() : null;
 
     if (svgCode) {
-      res.json({ svg: svgCode });
+      // 将 SVG 转换为 PNG，放大 2 倍
+      const pngBuffer = await sharp(Buffer.from(svgCode))
+        .resize({ width: 800, height: 1200 }) // 假设原始尺寸是 400x600
+        .png()
+        .toBuffer();
+
+      // 将 PNG 图片作为 base64 字符串发送
+      const base64Image = pngBuffer.toString('base64');
+      res.json({ image: `data:image/png;base64,${base64Image}` });
     } else {
-      res.status(500).json({ error: '无法生成 SVG' });
+      res.status(500).json({ error: '无法生成图片' });
     }
   } catch (error) {
     console.error('占卜过程出错:', error);
     res.status(500).json({ error: '占卜失败' });
   }
-});
-
-// 新的测试接口
-app.post('/divinate-test', (req, res) => {
-    // 忽略输入的问题，直接返回预制的 SVG
-    res.json({ svg: presetSvg });
 });
 
 // 提供静态文件

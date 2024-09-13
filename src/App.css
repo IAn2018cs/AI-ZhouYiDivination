@@ -66,21 +66,21 @@ body {
   
   .result {
     margin-top: 20px;
-  }
-  
-  .svg-container {
-    width: 100%;
-    overflow: auto;
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .button-group {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
   }
   
   .button-group button {
-    flex-basis: 48%;
+    width: 100%;
+    max-width: 200px;
     border-radius: 5px;
   }
   
@@ -113,6 +113,20 @@ body {
   input:disabled {
     background-color: #f0f0f0;
   }
+
+  .divination-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .divination-image.loaded {
+    opacity: 1;
+  }
   
   @media (max-width: 600px) {
     .container {
@@ -143,16 +157,18 @@ body {
   
     .button-group {
       flex-direction: column;
+      align-items: center;
     }
   
     .button-group button {
       width: 100%;
+      max-width: none;
       margin-bottom: 10px;
     }
   
-    .svg-container {
-      max-width: 100%;
-      overflow-x: auto;
+    .divination-image {
+      width: 100%;
+      border-radius: 5px;
     }
   }
   
