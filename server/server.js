@@ -4,7 +4,6 @@ const bodyParser = require('body-parser');
 const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
-const sharp = require('sharp');
 const svg2img = require('svg2img');
 
 const app = express();
@@ -78,7 +77,7 @@ def SVG_Card(解释, 卦象):
     design_principles = ["传统", "金属质感", "立体感", "精细"]
     
     画布 = {"宽度": 400, "高度": 600, "边距": 20}
-    标题字体 = "楷体"
+    标题字体 = "yang_medium 或者 楷体"
     自动缩放 = {"最小字号": 14}
     
     配色风格 = {
@@ -174,6 +173,11 @@ app.post('/divinate', async (req, res) => {
               mode: 'width', // or height
               value: 800,
             }
+          },
+          font: {
+            fontFiles: [path.join(__dirname, '..', 'fonts', 'yang_medium.ttf')], // Load custom fonts.
+            loadSystemFonts: false, // It will be faster to disable loading system fonts.
+            // defaultFontFamily: 'Source Han Serif CN Light', // You can omit this.
           }
         },
         async (error, buffer) => {
