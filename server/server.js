@@ -5,6 +5,7 @@ const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
 const sharp = require('sharp');
+const svg2img = require('svg2img');
 
 const app = express();
 app.use(cors());
@@ -134,79 +135,10 @@ if __name__ == "__main__":
     结果 = 周易占卜(用户问题)
     print(f"周易智慧：{结果}")`;
 
-
-// 预制的 SVG 内容
-const presetSvg = `
-<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <filter id="paper-texture" x="0" y="0" width="100%" height="100%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/>
-      <feDiffuseLighting in="noise" lighting-color="#f4e9d9" surfaceScale="2">
-        <feDistantLight azimuth="45" elevation="60"/>
-      </feDiffuseLighting>
-    </filter>
-  </defs>
-  
-  <!-- 背景 -->
-  <rect width="100%" height="100%" fill="#000000"/>
-  <rect width="380" height="580" x="10" y="10" fill="#f4e9d9" filter="url(#paper-texture)"/>
-  
-  <!-- 装饰边框 -->
-  <rect width="390" height="590" x="5" y="5" fill="none" stroke="#cd7f32" stroke-width="2"/>
-  
-  <!-- 标题 -->
-  <text x="200" y="50" font-family="楷体" font-size="24" fill="#8B4513" text-anchor="middle">周易占卜</text>
-  
-  <!-- 分隔线 -->
-  <line x1="40" y1="70" x2="360" y2="70" stroke="#8B4513" stroke-width="1"/>
-  
-  <!-- 用户问题 -->
-  <text x="200" y="100" font-family="楷体" font-size="18" fill="#8B4513" text-anchor="middle">今天适合发版吗？</text>
-  
-  <!-- 分隔线 -->
-  <line x1="40" y1="120" x2="360" y2="120" stroke="#8B4513" stroke-width="1"/>
-  
-  <!-- 卦象名称 -->
-  <text x="200" y="150" font-family="楷体" font-size="20" fill="#8B4513" text-anchor="middle" font-weight="bold">水山蹇卦</text>
-  
-  <!-- 具体卦象 -->
-  <g transform="translate(160, 180)">
-    <line x1="0" y1="0" x2="80" y2="0" stroke="#8B4513" stroke-width="4"/>
-    <line x1="0" y1="20" x2="40" y2="20" stroke="#8B4513" stroke-width="4"/>
-    <line x1="0" y1="40" x2="80" y2="40" stroke="#8B4513" stroke-width="4"/>
-    <line x1="0" y1="60" x2="40" y2="60" stroke="#8B4513" stroke-width="4"/>
-    <line x1="0" y1="80" x2="80" y2="80" stroke="#8B4513" stroke-width="4"/>
-    <line x1="0" y1="100" x2="40" y2="100" stroke="#8B4513" stroke-width="4"/>
-  </g>
-  
-  <!-- 解释文本 -->
-  <text x="40" y="320" font-family="楷体" font-size="16" fill="#8B4513">
-    <tspan x="40" dy="0">蹇，难也，险在前也。见险而能止，智矣哉！</tspan>
-    <tspan x="40" dy="25">君子以反身修德。</tspan>
-  </text>
-  
-  <!-- 总结 -->
-  <text x="40" y="400" font-family="楷体" font-size="16" fill="#8B4513">
-    <tspan x="40" dy="0">今日发版恐有阻碍，宜谨慎行事。</tspan>
-    <tspan x="40" dy="25">建议先自省检查，完善准备工作。</tspan>
-    <tspan x="40" dy="25">待时机成熟，方可顺利推进。</tspan>
-  </text>
-  
-  <!-- 分隔线 -->
-  <line x1="40" y1="480" x2="360" y2="480" stroke="#8B4513" stroke-width="1" stroke-dasharray="5,5"/>
-  
-  <!-- 提示文本 -->
-  <text x="200" y="510" font-family="楷体" font-size="14" fill="#8B4513" text-anchor="middle">天机难测，此卦仅供参考</text>
-  
-  <!-- Footer -->
-  <text x="360" y="550" font-family="楷体" font-size="12" fill="#8B4513" text-anchor="end">-- Powered by 海外PC团队</text>
-</svg>
-`;
-
 app.post('/divinate', async (req, res) => {
   try {
     const { question } = req.body;
-    
+
     // 调用 LLM API
     const llmResponse = await axios.post(LLM_API_ENDPOINT, {
       model: "claude-3-5-sonnet-20240620",
@@ -230,18 +162,30 @@ app.post('/divinate', async (req, res) => {
 
     // 从 LLM 响应中提取 SVG 代码
     const svgMatch = llmResponse.data.choices[0].message.content.match(/```svg([\s\S]*?)```/);
-    const svgCode = svgMatch ? svgMatch[1].trim() : null;
+    let svgCode = svgMatch ? svgMatch[1].trim() : null;
 
     if (svgCode) {
-      // 将 SVG 转换为 PNG，放大 2 倍
-      const pngBuffer = await sharp(Buffer.from(svgCode))
-        .resize({ width: 800, height: 1200 }) // 假设原始尺寸是 400x600
-        .png()
-        .toBuffer();
-
-      // 将 PNG 图片作为 base64 字符串发送
-      const base64Image = pngBuffer.toString('base64');
-      res.json({ image: `data:image/png;base64,${base64Image}` });
+      // 假设原始 SVG 尺寸为 400x600，我们将其放大到 800x1200
+      svg2img(svgCode,
+        {
+          format: 'png',
+          resvg: {
+            fitTo: {
+              mode: 'width', // or height
+              value: 800,
+            }
+          }
+        },
+        async (error, buffer) => {
+          if (error) {
+            console.error('SVG 转换错误:', error);
+            res.status(500).json({ error: '图片生成失败' });
+          } else {
+            // 将 PNG 图片作为 base64 字符串发送
+            const base64Image = buffer.toString('base64');
+            res.json({ image: `data:image/png;base64,${base64Image}` });
+          }
+        });
     } else {
       res.status(500).json({ error: '无法生成图片' });
     }
