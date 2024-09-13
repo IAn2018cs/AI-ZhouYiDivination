@@ -3,9 +3,10 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "${PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
       - LLM_API_ENDPOINT=${LLM_API_ENDPOINT}
       - LLM_API_KEY=${LLM_API_KEY}
+      - POWERED_BY=${POWERED_BY}
     restart: always

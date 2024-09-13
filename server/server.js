@@ -110,7 +110,7 @@ def SVG_Card(解释, 卦象):
   "总结 (深棕色)",
   "分隔线 (虚线)",
   "文本: 天机难测, 此卦仅供参考",
-  "Footer文本，靠右对齐: -- Powered by IAn2018",
+  "Footer文本，靠右对齐: -- ${process.env.POWERED_BY || 'Powered by IAn2018'}",
         "装饰边框(古铜色)"
     ]
     
