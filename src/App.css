@@ -118,16 +118,27 @@ body {
     .container {
       width: 95%;
       padding: 15px;
+      box-sizing: border-box;
     }
   
     .input-group {
       flex-direction: column;
     }
   
-    input, .input-group button {
+    input, 
+    .input-group button {
       width: 100%;
+      box-sizing: border-box;
       border-radius: 5px;
       margin-bottom: 10px;
+    }
+  
+    input {
+      padding: 10px;
+    }
+  
+    .input-group button {
+      margin-left: 0;
     }
   
     .button-group {
@@ -139,8 +150,9 @@ body {
       margin-bottom: 10px;
     }
   
-    .svg-wrapper {
+    .svg-container {
       max-width: 100%;
+      overflow-x: auto;
     }
   }
   
