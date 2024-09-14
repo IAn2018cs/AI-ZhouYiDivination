@@ -16,6 +16,7 @@ RUN mkdir -p /usr/share/fonts/chinese
 COPY --from=build-stage /app/fonts/*.ttf /usr/share/fonts/chinese/
 RUN fc-cache -f -v
 
+COPY --from=build-stage /app/config /app/config
 COPY --from=build-stage /app/dist /app/dist
 COPY --from=build-stage /app/server /app/server
 COPY package*.json ./

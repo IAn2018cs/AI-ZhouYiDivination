@@ -16,13 +16,15 @@ app.use(bodyParser.json());
 
 const LLM_API_ENDPOINT = process.env.LLM_API_ENDPOINT;
 const LLM_API_KEY = process.env.LLM_API_KEY;
+// 从环境变量中获取每日请求限制,如果未设置则默认为 5
+const DAILY_REQUEST_LIMIT = parseInt(process.env.DAILY_REQUEST_LIMIT, 10) || 5;
 
 // 使用 express-ip 中间件
 app.use(expressIp().getIpInfoMiddleware);
 
 // 创建一个内存存储的限速器
 const rateLimiter = new RateLimiterMemory({
-  points: 5, // 每个 IP 每天允许的请求次数
+  points: DAILY_REQUEST_LIMIT, // 每个 IP 每天允许的请求次数
   duration: 24 * 60 * 60, // 24小时
 });
 
