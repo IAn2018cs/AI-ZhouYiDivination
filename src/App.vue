@@ -18,6 +18,12 @@
           <button @click="saveImage">保存图片</button>
         </div>
       </div>
+      <div v-if="showModal" class="modal">
+        <div class="modal-content">
+          <p>{{ modalMessage }}</p>
+          <button @click="closeModal">确定</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

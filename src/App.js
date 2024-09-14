@@ -6,7 +6,9 @@ export default {
         return {
             question: '',
             svgResult: null,
-            isLoading: false
+            isLoading: false,
+            showModal: false,
+            modalMessage: '',
         }
     },
     methods: {
@@ -22,9 +24,9 @@ export default {
             } catch (error) {
                 console.error('占卜失败:', error);
                 if (error.response && error.response.status === 429) {
-                    alert(error.response.data.error);
+                    this.showCustomAlert(error.response.data.error);
                 } else {
-                    alert('占卜失败,请稍后再试');
+                    this.showCustomAlert('占卜失败，请稍后再试');
                 }
             } finally {
                 this.isLoading = false;
@@ -36,7 +38,7 @@ export default {
         saveImage() {
             if (!this.svgResult) {
                 console.error('没有可保存的图片');
-                alert('没有可保存的图片');
+                this.showCustomAlert('没有可保存的图片');
                 return;
             }
         
@@ -47,6 +49,13 @@ export default {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        },
+        showCustomAlert(message) {
+            this.modalMessage = message;
+            this.showModal = true;
+        },
+        closeModal() {
+            this.showModal = false;
         }
     }
 }
