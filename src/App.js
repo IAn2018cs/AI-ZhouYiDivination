@@ -21,7 +21,11 @@ export default {
                 this.svgResult = response.data.image;
             } catch (error) {
                 console.error('占卜失败:', error);
-                alert('占卜失败,请稍后再试');
+                if (error.response && error.response.status === 429) {
+                    alert(error.response.data.error);
+                } else {
+                    alert('占卜失败,请稍后再试');
+                }
             } finally {
                 this.isLoading = false;
             }
