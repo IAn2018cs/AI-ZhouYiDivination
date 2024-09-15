@@ -9,6 +9,9 @@ export default {
             isLoading: false,
             showModal: false,
             modalMessage: '',
+            copyrightYear: process.env.VUE_APP_COPYRIGHT_YEAR || new Date().getFullYear(),
+            copyrightOwner: process.env.VUE_APP_COPYRIGHT_OWNER || '',
+            privacyPolicyUrl: process.env.VUE_APP_PRIVACY_POLICY_URL || '#',
         }
     },
     methods: {

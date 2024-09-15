@@ -24,6 +24,11 @@
           <button @click="closeModal">确定</button>
         </div>
       </div>
+      <footer class="footer">
+        <p>© {{ copyrightYear }} Powered by {{ copyrightOwner }} | 
+          <a :href="privacyPolicyUrl" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        </p>
+      </footer>
     </div>
   </div>
 </template>
