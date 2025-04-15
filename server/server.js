@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 
 const LLM_API_ENDPOINT = process.env.LLM_API_ENDPOINT;
 const LLM_API_KEY = process.env.LLM_API_KEY;
+const LLM_MODEL = process.env.LLM_MODEL;
 // 从环境变量中获取每日请求限制,如果未设置则默认为 5
 const DAILY_REQUEST_LIMIT = parseInt(process.env.DAILY_REQUEST_LIMIT, 10) || 5;
 
@@ -47,7 +48,7 @@ app.post('/divinate', rateLimitMiddleware, async (req, res) => {
 
     // 调用 LLM API
     const llmResponse = await axios.post(LLM_API_ENDPOINT, {
-      model: "claude-3-5-sonnet-20240620",
+      model: LLM_MODEL,
       messages: [
         {
           role: "system",
